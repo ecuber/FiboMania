@@ -1,5 +1,5 @@
 const colors = [[128, 149, 142], [35, 151, 150], [148, 126, 176], [163, 165, 195], [169, 210, 213], [196, 214, 176]];
-const multiplier = 25;
+const multiplier = 15;
 sideLengths = [];
 
 // sets up canvas
@@ -8,37 +8,43 @@ function setup() {
   noLoop();
 }
 
-const phi = ((1 + Math.sqrt(5)) / 2);
-// main loop
+/**
+ * draw - main loop from p5 library.
+ */
 function draw() {
   background(247, 247, 242);
 
-  let x = 600;
-  let y = 300;
-  for (let i = 0; i < 12; i++) {
+  let x = 875;
+  let y = 450;
+  for (let i = 0; i < 15; i++) {
     let len = fibonacci(i) * multiplier;
-    sideLengths.push(len);
+    sideLengths.push({
+      len: len,
+      x: x,
+      y: y
+    });
+    stroke(0, 0, 0);
+    arc(x, y, len, len, 0, PI / 2.0);
     fillIndex(i % 5);
     rect(x, y, len, len);
-
+    
     // down
     if (i % 4 === 0) {
       y += len;
     // right
     } else if(i % 4 === 1) {
       x += len;
-      y -= sideLengths[i - 1];
+      y -= sideLengths[i - 1].len;
     // up
     } else if(i % 4 === 2) {
-      y -= len + sideLengths[i - 1];
-      x -= sideLengths[i - 1];
+      y -= len + sideLengths[i - 1].len;
+      x -= sideLengths[i - 1].len;
     // left
     } else if (i % 4 === 3) {
-      x -= len + sideLengths[i - 1];
+      x -= len + sideLengths[i - 1].len;
     }
   }
 }
-
 
 /**
  * fillIndex - equivalent of p5.js fill(), uses RGB values from colors array.
