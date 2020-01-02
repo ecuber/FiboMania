@@ -1,3 +1,3 @@
 # FiboMania
 A fibonacci spiral project thingy<br>
-Hosted at [fibomania.herokuapp.com](fibomania.herokuapp.com).
+Hosted at <fibomania.herokuapp.com>.
