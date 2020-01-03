@@ -1,11 +1,17 @@
-const colors = [[128, 149, 142], [35, 151, 150], [148, 126, 176], [163, 165, 195], [169, 210, 213], [196, 214, 176]];
+const colors = [[31, 33, 61], [64, 74, 140], [104, 109, 183], [111, 115, 168], [176, 182, 242]];
 const multiplier = 15;
-sideLengths = [];
+
+const DOWN = 0, BR = 0;
+const RIGHT = 1, TR = 1;
+const UP = 2, TL = 2;
+const LEFT = 3, BL = 3;
+let boxes = [];
 
 // sets up canvas
 function setup() {
   createCanvas(windowWidth, windowHeight);
   noLoop();
+  angleMode(DEGREES);
 }
 
 /**
@@ -13,36 +19,76 @@ function setup() {
  */
 function draw() {
   background(247, 247, 242);
+  stroke(208, 209, 221);
+  strokeWeight(2);
+  
 
+  // starting coordinates for first square
   let x = 875;
   let y = 450;
+  let dir;
+
   for (let i = 0; i < 15; i++) {
+    // determines side length in pixels by multiplying the fibonacci value by the constant.
     let len = fibonacci(i) * multiplier;
-    sideLengths.push({
+
+    // records this square's attributes in the boxes array.
+    boxes.push({
       len: len,
+      dir: i % 4,
       x: x,
       y: y
     });
-    stroke(0, 0, 0);
-    arc(x, y, len, len, 0, PI / 2.0);
-    fillIndex(i % 5);
+
+    // creates and renders square
+    fillIndex(i % colors.length);
     rect(x, y, len, len);
     
-    // down
-    if (i % 4 === 0) {
+    dir = i % 4;
+
+    if (dir === DOWN) {
       y += len;
-    // right
-    } else if(i % 4 === 1) {
-      x += len;
-      y -= sideLengths[i - 1].len;
-    // up
-    } else if(i % 4 === 2) {
-      y -= len + sideLengths[i - 1].len;
-      x -= sideLengths[i - 1].len;
-    // left
-    } else if (i % 4 === 3) {
-      x -= len + sideLengths[i - 1].len;
     }
+    else if(dir === RIGHT) {
+      x += len;
+      y -= boxes[i - 1].len;
+    }
+    else if(dir === UP) {
+      y -= len + boxes[i - 1].len;
+      x -= boxes[i - 1].len;
+    }
+    else if (dir === LEFT) {
+      x -= len + boxes[i - 1].len;
+    }
+  }
+
+  noFill();
+
+  let box, bX, bY, range, len;
+  for (let i = 0; i < boxes.length; i++) {
+      box = boxes[i];
+      bX = box.x;
+      bY = box.y;
+      len = box.len;
+
+      if (box.dir === BR) {
+        bX += box.len;
+        bY += box.len;
+        range = [180, 270];
+      }
+      else if (box.dir === TR) {
+        bX += len;
+        range = [90, 180];
+      }
+      else if (box.dir === TL) {
+        range = [0, 90];
+      }
+      else if (box.dir === BL) {
+        bY += len;
+        range = [270, 0];
+      }
+
+      arc(bX, bY, 2 * len, 2 * len, range[0], range[1]);
   }
 }
 
