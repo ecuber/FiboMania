@@ -1,4 +1,105 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:400|700&display=swap');
+
 html, body {
   margin: 0;
   height: 100vh;
+  background-color: rgb(60, 69, 131);
+}
+
+#nav {
+  position: absolute;
+  left: -400px;
+  display: flex;
+  padding: 10px 15px;
+  background-color: rgb(52, 60, 114);
+  color: #ffffff;
+  box-shadow: 0 8px 10px 0 rgba(0,0,0,0.24), 0 14px 35px 0 rgba(0,0,0,0.19);
+  animation: slide 1.0s cubic-bezier(0.32, 0.05, 0, 0.98) forwards;
+  animation-delay: 0.5s;
+  z-index: 2;
+}
+
+@keyframes slide {
+  100% { left: 0; }
+}
+
+a.header, a.header:visited {
+  font-family: "Lato", sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  margin-right: 15px;;
+  padding: 5px 0;
+  text-decoration: none;
+  color: #ffffff;
+  transition: 0.3s;
+}
+
+button.nav {
+  font-family: "Lato", sans-serif;
+  transition: 0.3s;
+  margin: 0 5px;
+  line-height: 17px;
+  font-size: 15px;
+  background-color: rgb(214, 215, 232);
+  color: rgb(43, 50, 94);
+  border-radius: 6px;
+  user-select: none;
+  padding: 0 12px
+}
+
+button:focus {
+  outline:0;
+}
+
+button#decr {
+  margin-left: 20px;
+}
+
+button.disabled {
+  cursor: not-allowed;
+}
+
+button.disabled:active {
+  animation: shake 0.2s;
+}
+
+@keyframes shake {
+  8%, 41% {transform: translateX(-5px);}
+  25%, 58% {transform: translateX(5px);}
+  75% {transform: translateX(-2px);}
+  92% {transform: translateX(2px);}
+  0%, 100% {transform: translateX(0);}
+}
+
+button:hover {
+  box-shadow: 0 8px 14px 0 rgba(0,0,0,0.24), 0 9px 45px 0 rgba(0,0,0,0.19);
+  cursor: pointer;
+}
+
+a.header:hover {
+  text-shadow: 6px 3px 12px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+}
+
+div#error {
+  display: none;
+  position: absolute;
+  Padding: 10px;
+  left: 10px;
+  background-color: rgb(158, 31, 48);
+  color: white;
+  font-family: "Lato", sans-serif;
+  box-shadow: 0 8px 10px 0 rgba(0,0,0,0.24), 0 14px 35px 0 rgba(0,0,0,0.19);
+}
+
+div#error.visible {
+  display: block;
+  animation: slideOut 4s ease;
+}
+
+@keyframes slideOut {
+  0% {top: 0px;}
+  25% {top: 75px;}
+  75% {top: 75px;}
+  100% {top: 0px;}
 }

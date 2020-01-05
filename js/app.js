@@ -1,52 +1,55 @@
 const colors = [[31, 33, 61], [64, 74, 140], [104, 109, 183], [111, 115, 168], [176, 182, 242]];
-let multiplier = 15;
 const DOWN = 0, BR = 0;
 const RIGHT = 1, TR = 1;
 const UP = 2, TL = 2;
 const LEFT = 3, BL = 3;
+const multiplier = 15;
 
-const controls = {
+let canvas, strokeWt;
+let zoomIndex = 0;
+let controls = {
   view: {x: 0, y: 0, zoom: 1},
   viewPos: { prevX: null,  prevY: null,  isDragging: false },
 }
 
 // sets up canvas
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  canvas = createCanvas(windowWidth, windowHeight);
+  // switches from radians to degrees
   angleMode(DEGREES);
-  
 }
 
 /**
- * draw - main loop from p5 library.
+ * main loop from p5 library.
  */
 function draw() {
-  let boxes = [];
   
-  // ZOOM AND TRANSLATION
   translate(controls.view.x, controls.view.y);
-  console.log(controls.view.zoom);
-  if (controls.view.zoom > -0.05) {
-    scale(controls.view.zoom)
-  } else {
-    scale(1);
-  }
-  
+  scale(controls.view.zoom);
+
+  zoom = controls.view.zoom;
+  strokeWt = zoom < 1 ? 1 / zoom * 2 : 2;
 
   background(247, 247, 242);
   stroke(208, 209, 221);
-  strokeWeight(2);
-  
+  strokeWeight(strokeWt);
+
+  drawGrid();
+}
+
+/**
+ * Draws the grid of Fibonacci squares.
+ */
+function drawGrid() {
+  let boxes = [];
 
   // starting coordinates for first square
   let x = 875;
   let y = 450;
   let dir;
-
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 30; i++) {
     // determines side length in pixels by multiplying the fibonacci value by the constant.
     let len = fibonacci(i) * multiplier;
-
     // records this square's attributes in the boxes array.
     boxes.push({
       len: len,
@@ -54,21 +57,18 @@ function draw() {
       x: x,
       y: y
     });
-
     // creates and renders square
     fillIndex(i % colors.length);
     rect(x, y, len, len);
-    
     dir = i % 4;
-
     if (dir === DOWN) {
       y += len;
     }
-    else if(dir === RIGHT) {
+    else if (dir === RIGHT) {
       x += len;
       y -= boxes[i - 1].len;
     }
-    else if(dir === UP) {
+    else if (dir === UP) {
       y -= len + boxes[i - 1].len;
       x -= boxes[i - 1].len;
     }
@@ -76,42 +76,48 @@ function draw() {
       x -= len + boxes[i - 1].len;
     }
   }
+  drawSpiral(boxes);
+}
 
+/**
+ * Draws fibonacci spiral based on data from existing grid.
+ * 
+ * @param {array} boxes - Array of objects containing data on previously generated squares
+ */
+function drawSpiral(boxes) {
   noFill();
-
   let box, bX, bY, range, len;
   for (let i = 0; i < boxes.length; i++) {
-      box = boxes[i];
-      bX = box.x;
-      bY = box.y;
-      len = box.len;
-
-      if (box.dir === BR) {
-        bX += box.len;
-        bY += box.len;
-        range = [180, 270];
-      }
-      else if (box.dir === TR) {
-        bX += len;
-        range = [90, 180];
-      }
-      else if (box.dir === TL) {
-        range = [0, 90];
-      }
-      else if (box.dir === BL) {
-        bY += len;
-        range = [270, 0];
-      }
-
-      arc(bX, bY, 2 * len, 2 * len, range[0], range[1]);
+    box = boxes[i];
+    bX = box.x;
+    bY = box.y;
+    len = box.len;
+    if (box.dir === BR) {
+      bX += box.len;
+      bY += box.len;
+      range = [180, 270];
+    }
+    else if (box.dir === TR) {
+      bX += len;
+      range = [90, 180];
+    }
+    else if (box.dir === TL) {
+      range = [0, 90];
+    }
+    else if (box.dir === BL) {
+      bY += len;
+      range = [270, 0];
+    }
+    arc(bX, bY, 2 * len, 2 * len, range[0], range[1]);
   }
+  fillIndex(0);
 }
 
 /**
  * fillIndex - equivalent of p5.js fill(), uses RGB values from colors array.
  *
  * @param  {int} i - index of color.
- * @returns {void}
+ * @returns {null}
  */
 function fillIndex(i) {
   const color = colors[i];
@@ -140,21 +146,107 @@ function fibonacci(index) {
     return arr[index];
 }
 
-/*
- *
- * EVENT HANDLERS & CONTROLS CLASS
- * Written by Amir Saboury: https://codepen.io/amir-s/pen/jzqZdG?editors=0010
- *
+/**
+ * Takes a screenshot of the current visible canvas and creates a dialogue to download it.
  */
+function screenshot() {
+  saveCanvas(canvas, "fibonacci", "jpg");
+}
 
+/**
+ * Resets all translations and dilations of the canvas smoothly ;)
+ */
+async function resetCanvas() {
+  zoomIndex = 0;
+  enableButtons();
+  controls.viewPos = { prevX: null,  prevY: null,  isDragging: false };
+  let xPrev = controls.view.x;
+  let yPrev = controls.view.y;
+  let zPrev = 1 - controls.view.zoom;
+  let zDir = zPrev > 1 ? -1 : 1;
+
+  for (let i = 0; i < 20000; i++) {
+    setTimeout(() => {
+      controls.view.x += -1 * xPrev / 20000;
+      controls.view.y += -1 * yPrev / 20000;
+      controls.view.zoom += zDir * zPrev / 20000;
+    }, 10);
+  }
+}
+
+/**
+ * Zooms out by 15% until zoom level reaches 40%.
+ */
+function zoomOut() {
+  if (zoomIndex > -4) {
+    zoomIndex--;
+    enableButtons();
+
+    const zoom = -0.15;
+    const wx = (width/2.5)/(width*controls.view.zoom);
+    const wy = (height/2.5)/(height*controls.view.zoom);
+
+    for(let i = 0; i < 20000; i++) {
+      setTimeout(() => {
+        controls.view.zoom -= 0.00001
+        controls.view.x -= wx*width*zoom/20000;
+        controls.view.y -= wy*height*zoom/20000;
+       }, 10);
+    }
+
+  } else {
+    displayErrorDiv();
+    document.getElementById("decr").classList.add("disabled");
+  } 
+}
+
+/**
+ * Zooms in 15% until zoom level reaches 700%.
+ */
+function zoomIn() {
+  if (zoomIndex < 42) {
+    zoomIndex++;
+    enableButtons();
+
+    const zoom = 0.15;
+    const wx = (width/2.5)/(width*controls.view.zoom);
+    const wy = (height/2.5)/(height*controls.view.zoom);
+
+      for(let i = 0; i < 15000; i++) {
+        setTimeout(() => {
+          controls.view.zoom += 0.00001
+          controls.view.x -= wx*width*zoom/15000;
+          controls.view.y -= wy*height*zoom/15000;
+        }, 10);
+      }
+  } else {
+    displayErrorDiv();
+    document.getElementById("incr").classList.add("disabled");
+  }
+}
+
+function displayErrorDiv() {
+  document.getElementById("error").classList.add("visible");
+  setTimeout(() => {
+    document.getElementById("error").classList.remove("visible");
+  }, 6000);
+}
+
+/**
+ * Re-enables all buttons that may have been disabled (zoom in/out) due to reaching a zoom constraint.
+ */
+function enableButtons() {
+  document.getElementById("decr").classList.remove("disabled");
+  document.getElementById("incr").classList.remove("disabled");
+}
+
+
+/*
+ * Controls class written by Amir Saboury: https://codepen.io/amir-s/pen/jzqZdG?editors=0010
+ */
 window.mousePressed = e => Controls.move(controls).mousePressed(e)
 window.mouseDragged = e => Controls.move(controls).mouseDragged(e);
 window.mouseReleased = e => Controls.move(controls).mouseReleased(e)
-
-function mouseWheel(event) {
-  Controls.zoom(controls).worldZoom(event)
-}
-
 
 class Controls {
   static move(controls) {
@@ -192,30 +284,4 @@ class Controls {
     }
   }
 
-  static zoom(controls) {
-    // function calcPos(x, y, zoom) {
-    //   const newX = width - (width * zoom - x);
-    //   const newY = height - (height * zoom - y);
-    //   return {x: newX, y: newY}
-    // }
-
-    function worldZoom(e) {
-      const {x, y, deltaY} = e;
-      const direction = deltaY < 0 ? -1 : 1;
-      const factor = 0.05;
-      
-      const zoom = direction * factor;
-    
-      const wx = (x-controls.view.x)/(width*controls.view.zoom);
-      const wy = (y-controls.view.y)/(height*controls.view.zoom);
-      
-      controls.view.x -= wx*width*zoom;
-      controls.view.y -= wy*height*zoom;
-      controls.view.zoom += zoom;
-      
-      
-    }
-
-    return {worldZoom}
-  }
 }
