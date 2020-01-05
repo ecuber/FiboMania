@@ -178,19 +178,19 @@ async function resetCanvas() {
  * Zooms out by 15% until zoom level reaches 40%.
  */
 function zoomOut() {
-  if (zoomIndex > -4) {
+  if (zoomIndex > -19) {
     zoomIndex--;
     enableButtons();
 
-    const zoom = -0.15;
-    const wx = (width/2.5)/(width*controls.view.zoom);
-    const wy = (height/2.5)/(height*controls.view.zoom);
+    const zoom = 0.05;
+    const wx = (width / 2)/(width*controls.view.zoom);
+    const wy = (height / 2)/(height*controls.view.zoom);
 
     for(let i = 0; i < 20000; i++) {
       setTimeout(() => {
-        controls.view.zoom -= 0.00001
-        controls.view.x -= wx*width*zoom/20000;
-        controls.view.y -= wy*height*zoom/20000;
+        controls.view.zoom -= zoom / 20000;
+        controls.view.x += wx*width*zoom/20000;
+        controls.view.y += wy*height*zoom/20000;
        }, 10);
     }
 
@@ -208,15 +208,17 @@ function zoomIn() {
     zoomIndex++;
     enableButtons();
 
-    const zoom = 0.15;
-    const wx = (width/2.5)/(width*controls.view.zoom);
-    const wy = (height/2.5)/(height*controls.view.zoom);
+    const zoom = 0.10;
+    const wx = (width / 2)/(width*controls.view.zoom);
+    const wy = (height / 2)/(height*controls.view.zoom);
+    let mult;
 
       for(let i = 0; i < 15000; i++) {
         setTimeout(() => {
-          controls.view.zoom += 0.00001
-          controls.view.x -= wx*width*zoom/15000;
-          controls.view.y -= wy*height*zoom/15000;
+          controls.view.zoom += zoom / 15000;
+          mult = controlsd.view.zoom > 1 ? 1 : -1.5;
+          controls.view.x -= mult*wx*width*zoom/15000;
+          controls.view.y -= mult*wy*height*zoom/15000; 
         }, 10);
       }
   } else {
