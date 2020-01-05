@@ -9,14 +9,23 @@ html, body {
 #nav {
   position: absolute;
   left: -400px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   padding: 10px 15px;
   background-color: rgb(52, 60, 114);
   color: #ffffff;
-  box-shadow: 0 8px 10px 0 rgba(0,0,0,0.24), 0 14px 35px 0 rgba(0,0,0,0.19);
-  animation: slide 1.0s cubic-bezier(0.32, 0.05, 0, 0.98) forwards;
-  animation-delay: 0.5s;
+  -webkit-box-shadow: 0 8px 10px 0 rgba(0,0,0,0.24), 0 14px 35px 0 rgba(0,0,0,0.19);
+          box-shadow: 0 8px 10px 0 rgba(0,0,0,0.24), 0 14px 35px 0 rgba(0,0,0,0.19);
+  -webkit-animation: slide 1.0s cubic-bezier(0.32, 0.05, 0, 0.98) forwards;
+          animation: slide 1.0s cubic-bezier(0.32, 0.05, 0, 0.98) forwards;
+  -webkit-animation-delay: 0.5s;
+          animation-delay: 0.5s;
   z-index: 2;
+}
+
+@-webkit-keyframes slide {
+  100% { left: 0; }
 }
 
 @keyframes slide {
@@ -31,11 +40,13 @@ a.header, a.header:visited {
   padding: 5px 0;
   text-decoration: none;
   color: #ffffff;
+  -webkit-transition: 0.3s;
   transition: 0.3s;
 }
 
 button.nav {
   font-family: "Lato", sans-serif;
+  -webkit-transition: 0.3s;
   transition: 0.3s;
   margin: 0 5px;
   line-height: 17px;
@@ -43,7 +54,10 @@ button.nav {
   background-color: rgb(214, 215, 232);
   color: rgb(43, 50, 94);
   border-radius: 6px;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
   padding: 0 12px
 }
 
@@ -60,19 +74,29 @@ button.disabled {
 }
 
 button.disabled:active {
-  animation: shake 0.2s;
+  -webkit-animation: shake 0.2s;
+          animation: shake 0.2s;
+}
+
+@-webkit-keyframes shake {
+  8%, 41% {-webkit-transform: translateX(-5px);transform: translateX(-5px);}
+  25%, 58% {-webkit-transform: translateX(5px);transform: translateX(5px);}
+  75% {-webkit-transform: translateX(-2px);transform: translateX(-2px);}
+  92% {-webkit-transform: translateX(2px);transform: translateX(2px);}
+  0%, 100% {-webkit-transform: translateX(0);transform: translateX(0);}
 }
 
 @keyframes shake {
-  8%, 41% {transform: translateX(-5px);}
-  25%, 58% {transform: translateX(5px);}
-  75% {transform: translateX(-2px);}
-  92% {transform: translateX(2px);}
-  0%, 100% {transform: translateX(0);}
+  8%, 41% {-webkit-transform: translateX(-5px);transform: translateX(-5px);}
+  25%, 58% {-webkit-transform: translateX(5px);transform: translateX(5px);}
+  75% {-webkit-transform: translateX(-2px);transform: translateX(-2px);}
+  92% {-webkit-transform: translateX(2px);transform: translateX(2px);}
+  0%, 100% {-webkit-transform: translateX(0);transform: translateX(0);}
 }
 
 button:hover {
-  box-shadow: 0 8px 14px 0 rgba(0,0,0,0.24), 0 9px 45px 0 rgba(0,0,0,0.19);
+  -webkit-box-shadow: 0 8px 14px 0 rgba(0,0,0,0.24), 0 9px 45px 0 rgba(0,0,0,0.19);
+          box-shadow: 0 8px 14px 0 rgba(0,0,0,0.24), 0 9px 45px 0 rgba(0,0,0,0.19);
   cursor: pointer;
 }
 
@@ -89,12 +113,21 @@ div#error {
   background-color: rgb(158, 31, 48);
   color: white;
   font-family: "Lato", sans-serif;
-  box-shadow: 0 8px 10px 0 rgba(0,0,0,0.24), 0 14px 35px 0 rgba(0,0,0,0.19);
+  -webkit-box-shadow: 0 8px 10px 0 rgba(0,0,0,0.24), 0 14px 35px 0 rgba(0,0,0,0.19);
+          box-shadow: 0 8px 10px 0 rgba(0,0,0,0.24), 0 14px 35px 0 rgba(0,0,0,0.19);
 }
 
 div#error.visible {
   display: block;
-  animation: slideOut 4s ease;
+  -webkit-animation: slideOut 4s ease;
+          animation: slideOut 4s ease;
+}
+
+@-webkit-keyframes slideOut {
+  0% {top: 0px;}
+  25% {top: 75px;}
+  75% {top: 75px;}
+  100% {top: 0px;}
 }
 
 @keyframes slideOut {
