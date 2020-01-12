@@ -216,9 +216,8 @@ function zoomIn() {
       for(let i = 0; i < 15000; i++) {
         setTimeout(() => {
           controls.view.zoom += zoom / 15000;
-          mult = controlsd.view.zoom > 1 ? 1 : -1.5;
-          controls.view.x -= mult*wx*width*zoom/15000;
-          controls.view.y -= mult*wy*height*zoom/15000; 
+          controls.view.x -= wx*width*zoom/15000;
+          controls.view.y -= wy*height*zoom/15000; 
         }, 10);
       }
   } else {
